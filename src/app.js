@@ -9,18 +9,18 @@ import { Server } from 'socket.io';
 import ProductsManager from "../src/dao/mongo/managers/productManager.js";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
-import session from "express-session";
-import productModel from "../src/dao/mongo/models/products.js";
 import messagesModel from "../src/dao/mongo/models/messages.js";
-import passport from "passport";
 import initializePassport from "./config/passport.config.js";
+import cookieParser from "cookie-parser";
+import config from "./config/config.js";
 
 const app = express();
-const connection = mongoose.connect(
-  "mongodb+srv://martinpe:123@clustercomercio.eeuskzl.mongodb.net/ecommerce?retryWrites=true&w=majority"
-);
+const url = config.mongoUrl;
 
-app.use(
+
+const connection = mongoose.connect(url);
+
+/* app.use(
   session({
     store: new MongoStore({
       mongoUrl:
@@ -31,9 +31,11 @@ app.use(
     resave: false,
     saveUninitialized: false,
   })
-);
+); */
 
-const server = app.listen(8080, () => console.log("escuchando en puertooo 8080"));
+
+const PORT = config.port || 8080;
+const server = app.listen(PORT, () => console.log("escuchando en puerto.."))
 const io = new Server(server);
 
 app.use((req, res, next) => {
@@ -48,8 +50,9 @@ app.use(express.static(`${__dirname}/public`));
 app.engine('handlebars', handlebars.engine());
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'handlebars');
+app.use(cookieParser());
 
-app.use(passport.initialize());
+//app.use(passport.initialize());
 initializePassport();
 
 app.use("/api/products", ProductsRouter);
