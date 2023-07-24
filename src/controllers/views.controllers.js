@@ -112,6 +112,7 @@ const getThanksView = async (req, res) => {
 const get401View = async (req, res) => {
   res.render("401error", { css: "401error" });
 };
+
 export default {
   getView,
   getViewRealTime,

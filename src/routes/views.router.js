@@ -30,8 +30,6 @@ router.get(
   viewsControllers.getCartView
 );
 
-//router.get("/cart", viewsControllers.getCartView);
-
 router.get("/cart/:cid", viewsControllers.getCartViewById);
 
 router.get("/chat", viewsControllers.getChatView);

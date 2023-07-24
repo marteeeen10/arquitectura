@@ -22,20 +22,6 @@ const url = config.mongoUrl;
 
 const connection = mongoose.connect(url);
 
-/* app.use(
-  session({
-    store: new MongoStore({
-      mongoUrl:
-      "mongodb+srv://martinpe:123@clustercomercio.eeuskzl.mongodb.net/ecommerce?retryWrites=true&w=majority",
-      ttl: 36000,
-    }),
-    secret: "maquinaria",
-    resave: false,
-    saveUninitialized: false,
-  })
-); */
-
-
 const PORT = config.port || 8080;
 const server = app.listen(PORT, () => console.log("escuchando en puerto.."))
 const io = new Server(server);
@@ -54,7 +40,6 @@ app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 app.use(cookieParser());
 
-//app.use(passport.initialize());
 initializePassport();
 
 app.use("/api/products", ProductsRouter);

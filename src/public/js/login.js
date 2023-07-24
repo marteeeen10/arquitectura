@@ -7,7 +7,6 @@ form.addEventListener("submit", async (event) => {
   const data = new FormData(form);
   const obj = {};
   data.forEach((value, key) => (obj[key] = value));
-
   const response = await fetch("/api/sessions/login", {
     method: "POST",
     body: JSON.stringify(obj),
@@ -17,7 +16,6 @@ form.addEventListener("submit", async (event) => {
   });
   const responseData = await response.json();
   console.log(responseData);
-
   if (responseData.status === "success") {
     Swal.fire({
       toast: true,
