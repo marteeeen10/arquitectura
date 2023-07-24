@@ -1,19 +1,21 @@
 import express from "express";
 import ProductsRouter from "./routes/products.mongo.router.js";
 import CartsRouter from "./routes/carts.mongo.router.js";
+import TicketRouter from "./routes/tickets.mongo.router.js";
 import sessionRouter from "./routes/session.router.js";
 import viewsRouter from "./routes/views.router.js";
-import __dirname from './utils.js';
-import handlebars from 'express-handlebars';
-import { Server } from 'socket.io';
-import ProductsManager from "../src/dao/mongo/managers/productManager.js";
+import __dirname from "./utils.js";
+import handlebars from "express-handlebars";
+import { Server } from "socket.io";
+import ProductsManager from "./dao/mongo/managers/productManager.js";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
-import messagesModel from "../src/dao/mongo/models/messages.js";
+import messagesModel from "./dao/mongo/models/messages.js";
 import initializePassport from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
-
+import nodemailer from "nodemailer";
+import twilio from "twilio";
 const app = express();
 const url = config.mongoUrl;
 
@@ -47,9 +49,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 
-app.engine('handlebars', handlebars.engine());
-app.set('views', `${__dirname}/views`);
-app.set('view engine', 'handlebars');
+app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
 app.use(cookieParser());
 
 //app.use(passport.initialize());
@@ -57,6 +59,7 @@ initializePassport();
 
 app.use("/api/products", ProductsRouter);
 app.use("/api/carts", CartsRouter);
+app.use("/api/tickets", TicketRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/", viewsRouter);
 

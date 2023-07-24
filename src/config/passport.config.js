@@ -6,7 +6,7 @@ import GithubStrategy from "passport-github2";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import CartsManager from "../dao/mongo/managers/cartManager.js";
 import config from "./config.js";
-
+import UserDTO from "../dtos/user/userDTO.js";
 const userManager = new UserManager();
 const cartManager = new CartsManager();
 
@@ -76,13 +76,14 @@ const initializePassportStrategies = () => {
 
         //Número 3!!! ¿El usuario existe y SÍ PUSO SU CONTRASEÑA CORRECTA? Como estoy en passport, sólo devuelvo al usuario
 
-        user = {
+        user = new UserDTO(user);
+/*         user = {
           id: user._id,
           name: `${user.first_name} ${user.last_name}`,
           email: user.email,
           role: user.role,
           cart: user.cart._id,
-        };
+        }; */
         return done(null, user);
       }
     )

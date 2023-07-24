@@ -17,7 +17,7 @@ const getView = async (req, res) => {
 
   const products = docs;
 
-  res.render("home", {
+  res.render("products", {
     user: req.user,
     products,
     page: rest.page,
@@ -29,13 +29,35 @@ const getView = async (req, res) => {
   });
 };
 
+const getViewHome = async (req, res) => {
+  res.render("home", { css: "home" });
+};
+
 const getViewRealTime = async (req, res) => {
   res.render("realTimeProducts", { css: "realTimeProducts" });
 };
 
 const getCartView = async (req, res) => {
-  const carts = await cartService.getCartsService();
-  res.render("cart", { carts, css: "cart" });
+  const cId = req.user.cart;
+  const carts = await cartService.getCartByIdService(cId).lean();
+  for (const item of carts.products) {
+    const { product, quantity } = item;
+    if (product && product.price) {
+      const price = product.price;
+      const subtotal = price * quantity;
+      item.subtotal = subtotal;
+    }
+  }
+
+  let total = 0;
+  for (const items of carts.products) {
+    const { product, quantity } = items;
+    if (product && product.price) {
+      const price = product.price;
+      total += price * quantity;
+    }
+  }
+  res.render("cart", { total, carts, css: "cart" });
 };
 
 const getCartViewById = async (req, res) => {
@@ -61,6 +83,35 @@ const getRestorePaswordView = async (req, res) => {
   res.render("restorePassword", { css: "login" });
 };
 
+const getAdminView = async (req, res) => {
+  res.render("admin", { css: "admin" });
+};
+
+const getPurchaseView = async (req, res) => {
+  const user = req.user;
+  const cId = req.user.cart;
+  const carts = await cartService.getCartByIdService(cId).lean();
+  for (const item of carts.products) {
+    const { product, quantity } = item;
+    const price = product.price;
+    const subtotal = price * quantity;
+    item.subtotal = subtotal;
+  }
+  let total = 0;
+  for (const items of carts.products) {
+    const { product, quantity } = items;
+    const price = product.price;
+    total += price * quantity;
+  }
+  res.render("purchase", { user, total, carts, css: "purchase" });
+};
+
+const getThanksView = async (req, res) => {
+  res.render("thanks", { css: "thanks" });
+};
+const get401View = async (req, res) => {
+  res.render("401error", { css: "401error" });
+};
 export default {
   getView,
   getViewRealTime,
@@ -70,4 +121,9 @@ export default {
   getRegisterView,
   getLoginView,
   getRestorePaswordView,
+  getViewHome,
+  getAdminView,
+  getPurchaseView,
+  getThanksView,
+  get401View,
 };
